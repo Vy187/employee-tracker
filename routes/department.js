@@ -16,7 +16,7 @@ department.post(`/new-department`, ( { body }, res) => {
 department.delete(`/:id`, (req, res) => {
     db.query(`DELETE FROM departments WHERE id = ?`, [req.params.id], (err, result) => {
         if (err) {
-            res.statusMessage(400).json({ error: res.message });
+            res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {
             res.json({ message: `Department not found`});
         } else {
