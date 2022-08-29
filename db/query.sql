@@ -1,7 +1,8 @@
 SELECT 
     id,
     department_name
-FROM departments;
+FROM departments
+ORDER BY id;
 
 SELECT 
     r.id,
@@ -9,7 +10,8 @@ SELECT
     r.salary,
     d.department_name
 FROM roles r
-JOIN departments d ON r.department_id = d.id;
+JOIN departments d ON r.department_id = d.id
+ORDER BY id;
 
 SELECT 
     e.id, 
@@ -23,4 +25,5 @@ SELECT
 FROM employees e
 LEFT JOIN employees m ON (e.manager_id = m.id)
 JOIN roles r ON e.role_id = r.id 
-JOIN departments d ON r.department_id = d.id;
+JOIN departments d ON r.department_id = d.id
+ORDER BY id;

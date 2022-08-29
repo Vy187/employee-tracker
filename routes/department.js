@@ -8,7 +8,7 @@ department.get(`/`, (req, res) => {
 })
 
 department.get(`/table`, (req, res) => {
-    db.query(`SELECT id, department_name FROM departments`, (err, rows) => {
+    db.query(`SELECT id, department_name FROM departments ORDER BY id`, (err, rows) => {
         (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
     })
 })
