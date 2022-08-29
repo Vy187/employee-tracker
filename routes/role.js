@@ -3,7 +3,7 @@ const db = require(`../config/connection`);
 
 role.get(`/`, (req, res) => {
     db.query(`SELECT id, title AS data FROM roles`, (err, rows) => {
-        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
+        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `burner success`, data: rows});
     })
 })
 

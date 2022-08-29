@@ -3,7 +3,7 @@ const db = require(`../config/connection`);
 
 department.get(`/`, (req, res) => {
     db.query(`SELECT id, department_name AS data FROM departments`, (err, rows) => {
-        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
+        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `burner success`, data: rows});
     })
 })
 

@@ -3,7 +3,7 @@ const db = require(`../config/connection`);
 
 employee.get(`/`, (req, res) => {
     db.query(`SELECT id, CONCAT(first_name, ' ', last_name) AS data FROM employees;`, (err, rows) => {
-        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
+        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `burner success`, data: rows});
     })
 })
 
