@@ -26,8 +26,8 @@ employee.post(`/`, ( { body }, res) => {
     })
 })
 
-employee.put(`/manager:id`, (req, res) => {
-    db.query(`UPDATE employees SET manager_id = ? WHERE id = ?`, [req.body.manager_id, req.params.id], (err, result) => {
+employee.put(`/role:id`, (req, res) => {
+    db.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [req.body.role_id, req.params.id], (err, result) => {
         if (err) {
             res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {
@@ -38,8 +38,8 @@ employee.put(`/manager:id`, (req, res) => {
     })
 })
 
-employee.put(`/role:id`, (req, res) => {
-    db.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [req.body.role_id, req.params.id], (err, result) => {
+employee.put(`/manager:id`, (req, res) => {
+    db.query(`UPDATE employees SET manager_id = ? WHERE id = ?`, [req.body.manager_id, req.params.id], (err, result) => {
         if (err) {
             res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {
