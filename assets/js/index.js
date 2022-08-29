@@ -4,7 +4,7 @@ const inquirer = require("inquirer");
 const addDepartmentQuestion = {
     type: `input`,
     name: `department_name`,
-    message: `What is the name of this new deparment`,
+    message: `What is the name of this new deparment?`,
     validate(answer) { return ((!/^[a-zA-Z\s]+$/.test(answer) || answer.trim().length < 3) ? `Department names contain letters or longer than 2 letters` : true) }
 }
 
@@ -18,7 +18,7 @@ const getData = (selection, route) =>
 
 const renderData = async (results) => {
     const data = await results.json();
-    if (typeof data.data[0].id !== 'undefined') {
+    if (data.message === `success`) {
         console.table(data.data);
     } else {
         return data.data;
@@ -27,9 +27,9 @@ const renderData = async (results) => {
 
 const getAndRenderData = (selection, route) => getData(selection, route).then(renderData);
 
-const addData = (selection, userInput) => {
-    fetch(`http://localhost:3001/api/${selection}/`, {
-        method: `POST`,
+const fetchData = (method, selection, userInput, id) => {
+    fetch(`http://localhost:3001/api/${selection}/${id}`, {
+        method: `${method}`,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -37,13 +37,25 @@ const addData = (selection, userInput) => {
     })
 }
 
-const postRoleBody = async () => {
-    departmentsData = await getAndRenderData(`department`, ``);
-    departments = []
+const fetchBurnerData = async (selection) => {
+    unparsedData = await getAndRenderData(selection, ``);
+    parsedData = [];
+    parsedDataData = [];
+    parsedIdData =[];
 
-    for (i = 0; i < departmentsData.length; i++) {
-        departments.push(departmentsData[i].department_name)
+    for (i = 0; i < unparsedData.length; i++) {
+        parsedDataData.push(unparsedData[i].data)
+        parsedIdData.push(unparsedData[i].id)
     }
+
+    parsedData.push(parsedIdData);
+    parsedData.push(parsedDataData);
+
+    return parsedData;
+}
+
+const postRoleBody = async () => {
+    departmentsData = await fetchBurnerData(`department`);
 
     body = await inquirer.prompt([
         {
@@ -56,16 +68,17 @@ const postRoleBody = async () => {
             type: `input`,
             name: `salary`,
             message: `What the salary of this role?`,
-            validate(answer) {return ((!/^[0-9]+$/.test(answer)) ? `Numbers should only contain numbers` : true)}
+            validate(answer) { return ((!/^[0-9]+$/.test(answer)) ? `Numbers should only contain numbers` : true) }
         },
         {
             type: `list`,
             name: `department_id`,
             message: `Which department does this role belong to?`,
-            choices: departments
+            choices: departmentsData[1]
         }
     ]).then((answer) => {
-        answer.department_id = departments.indexOf(answer.department_id) + 1;
+        answer.department_id = departmentsData[0][departmentsData[1].indexOf(answer.department_id)];
+
         return answer;
     })
 
@@ -73,18 +86,9 @@ const postRoleBody = async () => {
 }
 
 const postEmployeeBody = async () => {
-    rolesData = await getAndRenderData(`role`, ``);
-    employeesData = await getAndRenderData(`employee`, ``);
-    roles = []
-    employees = [`No Manager`]
-
-    for (i = 0; i < rolesData.length; i++) {
-        roles.push(rolesData[i].title)
-    }
-
-    for (i = 0; i < employeesData.length; i++) {
-        employees.push(employeesData[i].full_name)
-    }
+    rolesData = await fetchBurnerData(`role`);
+    employeesData = await fetchBurnerData(`employee`);
+    employeesData[1].push(`No Manager`) 
 
     body = await inquirer.prompt([
         {
@@ -103,21 +107,37 @@ const postEmployeeBody = async () => {
             type: `list`,
             name: `role_id`,
             message: `What role does this employee take a part in?`,
-            choices: roles
+            choices: rolesData[1]
         },
         {
             type: `list`,
             name: `manager_id`,
             message: `Who manages this employee?`,
-            choices: employees
+            choices: employeesData[1]
         }
     ]).then((answer) => {
-        (answer.manager_id === `No Manager`) ? answer.manager_id = null : answer.manager_id = employees.indexOf(answer.manager_id);
-        answer.role_id = roles.indexOf(answer.role_id) + 1;
+        (answer.manager_id === `No Manager`) ? answer.manager_id = null : answer.manager_id = employeesData[0][employeesData[1].indexOf(answer.manager_id)];
+        answer.role_id = rolesData[0][rolesData[1].indexOf(answer.role_id)];
+
         return answer;
     })
 
     return body;
+}
+
+const getId = async (selection) => {
+    idData = await fetchBurnerData(selection);
+
+    id = await inquirer.prompt(
+        {
+            type: `list`,
+            name: `id`,
+            message: `Select one from the following?`,
+            choices: idData[1]
+        }
+    ).then((answer) => { return answer = idData[0][idData[1].indexOf(answer.id)]})
+    
+    return id;
 }
 
 const app = async () => {
@@ -132,26 +152,24 @@ const app = async () => {
                 getAndRenderData(`employee`, `table`).then(app);
                 break;
             case `Add Employee`:
-                postEmployeeBody().then((body) => addData(`employee`, body)).then(app)
+                postEmployeeBody().then((body) => fetchData(`POST`, `employee`, body, ``)).then(app)
                 break;
             case `Update Employee Role`:
-
+                getId(`employee`);
                 break;
             case `View All Roles`:
                 getAndRenderData(`role`, `table`).then(app);
                 break;
             case `Add Role`:
-                postRoleBody().then((body) => addData(`role`, body)).then(app)
+                postRoleBody().then((body) => fetchData(`POST`, `role`, body, ``)).then(app)
                 break;
             case `View All Departments`:
                 getAndRenderData(`department`, `table`).then(app);
                 break;
             case `Add Department`:
-                inquirer.prompt(addDepartmentQuestion).then((answer) => addData(`department`, answer)).then(app);
+                inquirer.prompt(addDepartmentQuestion).then((body) => fetchData(`POST`, `department`, body, ``)).then(app);
                 break;
             default:
-
-                break;
         }
     })
 }
