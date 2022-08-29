@@ -13,7 +13,7 @@ employee.get(`/table`, (req, res) => {
     })
 })
 
-employee.post(`/new-employee`, ( { body }, res) => {
+employee.post(`/`, ( { body }, res) => {
     console.log(body.first_name)
     db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [body.first_name, body.last_name, body.role_id, body.manager_id], (err, result) => {
         (err) ? res.status(400).json({ error: err.message}) : res.json({ message: `success`, data: body});

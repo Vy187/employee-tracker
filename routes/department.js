@@ -13,7 +13,7 @@ department.get(`/table`, (req, res) => {
     })
 })
 
-department.post(`/new-department`, ( { body }, res) => {
+department.post(`/`, ( { body }, res) => {
     db.query(`INSERT INTO departments (department_name) VALUES (?)`, [body.department_name], (err, result) => {
         (err) ? res.status(400).json({ error: err.message}) : res.json({ message: `success`, data: body});
     })

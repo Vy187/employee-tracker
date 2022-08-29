@@ -13,7 +13,7 @@ role.get(`/table`, (req, res) => {
     })
 })
 
-role.post(`/new-role`, ( { body }, res) => {
+role.post(`/`, ( { body }, res) => {
     db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [body.title, body.salary, body.department_id], (err, result) => {
         (err) ? res.status(400).json({ error: err.message}) : res.json({ message: `success`, data: body});
     })
