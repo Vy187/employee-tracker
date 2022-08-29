@@ -41,7 +41,7 @@ const fetchBurnerData = async (selection) => {
     unparsedData = await getAndRenderData(selection, ``);
     parsedData = [];
     parsedDataData = [];
-    parsedIdData =[];
+    parsedIdData = [];
 
     for (i = 0; i < unparsedData.length; i++) {
         parsedDataData.push(unparsedData[i].data)
@@ -88,7 +88,7 @@ const postRoleBody = async () => {
 const postEmployeeBody = async () => {
     rolesData = await fetchBurnerData(`role`);
     employeesData = await fetchBurnerData(`employee`);
-    employeesData[1].push(`No Manager`) 
+    employeesData[1].push(`No Manager`)
 
     body = await inquirer.prompt([
         {
@@ -132,12 +132,43 @@ const getId = async (selection) => {
         {
             type: `list`,
             name: `id`,
-            message: `Select one from the following?`,
+            message: `Select one from the following ${selection}s?`,
             choices: idData[1]
         }
-    ).then((answer) => { return answer = idData[0][idData[1].indexOf(answer.id)]})
-    
+    ).then((answer) => { return answer = idData[0][idData[1].indexOf(answer.id)] })
+
     return id;
+}
+
+const updateData = async (change) => {
+    selectedId = await getId(`employee`);
+    currentIds = await getAndRenderData(`employee`, selectedId)
+    changeData = await fetchBurnerData(change);
+    
+    if (change === `role`) {
+        if (currentIds[0].role_id === 1) {
+            changeData[0].shift()
+            changeData[1].shift()
+        } else if (currentIds[0].role_id < changeData[0].length) {
+            spliceIndex = currentIds[0].role_id - 1
+            changeData[0].splice(spliceIndex, spliceIndex);
+            changeData[1].splice(spliceIndex, spliceIndex);
+        } else {
+            changeData[0].pop()
+            changeData[1].pop()
+        }
+    }
+
+    changeId = await inquirer.prompt(
+        {
+            type: `list`,
+            name: `id`,
+            message: `Select one from the following ${change}s?`,
+            choices: changeData[1]
+        }
+    ).then((answer) => { return answer = changeData[0][changeData[1].indexOf(answer.id)] })
+    
+    await (change === `role`) ? fetchData(`PUT`, `employee`, { role_id: changeId }, `role${selectedId}`) : console.log(`nothing`)
 }
 
 const app = async () => {
@@ -155,7 +186,7 @@ const app = async () => {
                 postEmployeeBody().then((body) => fetchData(`POST`, `employee`, body, ``)).then(app)
                 break;
             case `Update Employee Role`:
-                getId(`employee`);
+                updateData(`role`).then(app);
                 break;
             case `View All Roles`:
                 getAndRenderData(`role`, `table`).then(app);
