@@ -2,6 +2,12 @@ const department = require(`express`).Router();
 const db = require(`../config/connection`);
 
 department.get(`/`, (req, res) => {
+    db.query(`SELECT department_name FROM departments`, (err, rows) => {
+        (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
+    })
+})
+
+department.get(`/table`, (req, res) => {
     db.query(`SELECT id, department_name FROM departments`, (err, rows) => {
         (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
     })
