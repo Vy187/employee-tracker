@@ -2,7 +2,7 @@ const role = require(`express`).Router();
 const db = require(`../config/connection`);
 
 role.get(`/`, (req, res) => {
-    db.query(`SELECT r.title FROM roles r`, (err, rows) => {
+    db.query(`SELECT r.title AS data FROM roles r`, (err, rows) => {
         (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
     })
 })

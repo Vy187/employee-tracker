@@ -2,7 +2,7 @@ const employee = require(`express`).Router();
 const db = require(`../config/connection`);
 
 employee.get(`/`, (req, res) => {
-    db.query(`SELECT CONCAT(e.first_name, ' ', e.last_name) AS full_name FROM employees e;`, (err, rows) => {
+    db.query(`SELECT CONCAT(e.first_name, ' ', e.last_name) AS data FROM employees e;`, (err, rows) => {
         (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `success`, data: rows});
     })
 })
