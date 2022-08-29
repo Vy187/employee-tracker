@@ -20,6 +20,18 @@ employee.post(`/`, ( { body }, res) => {
     })
 })
 
+employee.put(`/:id`, (req, res) => {
+    db.query(`UPDATE employees SET manager_id = ? WHERE id = ?`, [req.body.manager_id, req.params.id], (err, result) => {
+        if (err) {
+            res.status(400).json({ error: res.message });
+        } else if (!result.affectedRows) {
+            res.json({ message: `Employee not found`});
+        } else {
+            res.json({ message: `updated`, data: req.body, changes: result.affectedRows});
+        }
+    })
+})
+
 employee.delete(`/:id`, (req, res) => {
     db.query(`DELETE FROM employees WHERE id = ?`, [req.params.id], (err, result) => {
         if (err) {
