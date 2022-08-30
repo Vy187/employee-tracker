@@ -7,7 +7,7 @@ employee.get(`/`, (req, res) => {
     })
 })
 
-employee.get(`/:id`, (req, res) => {
+employee.get(`/employee:id`, (req, res) => {
     db.query(`SELECT role_id, manager_id FROM employees WHERE id = ?;`, req.params.id ,(err, rows) => {
         (err) ? res.status(500).json({ error: err.message }) : res.json({ message: `burner success`, data: rows});
     })
