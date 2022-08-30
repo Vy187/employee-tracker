@@ -44,8 +44,8 @@ const fetchBurnerData = async (selection) => {
     parsedIdData = [];
 
     for (i = 0; i < unparsedData.length; i++) {
-        parsedDataData.push(unparsedData[i].data)
-        parsedIdData.push(unparsedData[i].id)
+        parsedDataData.push(unparsedData[i].data);
+        parsedIdData.push(unparsedData[i].id);
     }
 
     parsedData.push(parsedIdData);
@@ -88,7 +88,7 @@ const postRoleBody = async () => {
 const postEmployeeBody = async () => {
     rolesData = await fetchBurnerData(`role`);
     employeesData = await fetchBurnerData(`employee`);
-    employeesData[1].push(`No Manager`)
+    employeesData[1].push(`No Manager`);
 
     body = await inquirer.prompt([
         {
@@ -142,21 +142,49 @@ const getId = async (selection) => {
 
 const updateData = async (change) => {
     selectedId = await getId(`employee`);
-    currentIds = await getAndRenderData(`employee`, selectedId)
+    currentIds = await getAndRenderData(`employee`, `employee${selectedId}`);
     changeData = await fetchBurnerData(change);
-    
+
     if (change === `role`) {
         if (currentIds[0].role_id === 1) {
-            changeData[0].shift()
-            changeData[1].shift()
+            changeData[0].shift();
+            changeData[1].shift();
         } else if (currentIds[0].role_id < changeData[0].length) {
-            spliceIndex = currentIds[0].role_id - 1
+            spliceIndex = currentIds[0].role_id - 1;
             changeData[0].splice(spliceIndex, spliceIndex);
             changeData[1].splice(spliceIndex, spliceIndex);
         } else {
-            changeData[0].pop()
-            changeData[1].pop()
+            changeData[0].pop();
+            changeData[1].pop();
         }
+    } else {
+        if (selectedId === 1) {
+            changeData[0].shift();
+            changeData[1].shift();
+        } else if (selectedId < changeData[0].length) {
+            spliceIndex = selectedId - 1;
+            changeData[0].splice(spliceIndex, spliceIndex);
+            changeData[1].splice(spliceIndex, spliceIndex);
+        } else {
+            changeData[0].pop();
+            changeData[1].pop();
+        }
+
+        if (currentIds[0].manager_id !== null) {
+            if (currentIds[0].manager_id === 1) {
+                changeData[0].shift();
+                changeData[1].shift();
+            } else if (currentIds[0].manager_id < changeData[0].length) {
+                spliceIndex = currentIds[0].manager_id - 1;
+                changeData[0].splice(spliceIndex, spliceIndex);
+                changeData[1].splice(spliceIndex, spliceIndex);
+            } else {
+                changeData[0].pop();
+                changeData[1].pop();
+            }
+        }
+
+        changeData[1].push(`No manager`);
     }
 
     changeId = await inquirer.prompt(
@@ -167,8 +195,9 @@ const updateData = async (change) => {
             choices: changeData[1]
         }
     ).then((answer) => { return answer = changeData[0][changeData[1].indexOf(answer.id)] })
-    
-    await (change === `role`) ? fetchData(`PUT`, `employee`, { role_id: changeId }, `role${selectedId}`) : console.log(`nothing`)
+
+    if (changeId === `No manager`) { changeId = null }
+    await (change === `role`) ? fetchData(`PUT`, `employee`, { role_id: changeId }, `role${selectedId}`) : fetchData(`PUT`, `employee`, { manager_id: changeId }, `manager${selectedId}`);
 }
 
 const app = async () => {
@@ -176,7 +205,7 @@ const app = async () => {
         type: `list`,
         name: `choice`,
         message: `What would you like to do?`,
-        choices: [`View All Employees`, `Add Employee`, `Update Employee Role`, `View All Roles`, `Add Role`, `View All Departments`, `Add Department`, `Quit`]
+        choices: [`View All Employees`, `Add Employee`, `Update Employee Role`, `Update Employee Manager`, `View All Roles`, `Add Role`, `View All Departments`, `Add Department`, `Quit`]
     }).then((answer) => {
         switch (answer.choice) {
             case `View All Employees`:
@@ -187,6 +216,9 @@ const app = async () => {
                 break;
             case `Update Employee Role`:
                 updateData(`role`).then(app);
+                break;
+            case `Update Employee Manager`:
+                updateData(`employee`).then(app);
                 break;
             case `View All Roles`:
                 getAndRenderData(`role`, `table`).then(app);
