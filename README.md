@@ -23,6 +23,8 @@ A simple command line application that helps to handle the basic essential funct
 
 ## Server Startup
 * npm start
+* After the server starts up, on a different terminal enter below to run application
+* npm run index
 ![Render](./assets/demo/demo.gif)
 
 ## Packages
