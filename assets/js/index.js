@@ -8,9 +8,9 @@ const addDepartmentQuestion = {
     validate(answer) { return ((!/^[a-zA-Z\s]+$/.test(answer) || answer.trim().length < 3) ? `Department names contain letters or longer than 2 letters` : true) }
 }
 
-const getData = (selection, route) =>
+const getOrDeleteData = (method, selection, route) =>
     fetch(`http://localhost:3001/api/${selection}/${route}`, {
-        method: `GET`,
+        method: `${method}`,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -25,7 +25,7 @@ const renderData = async (results) => {
     }
 }
 
-const getAndRenderData = (selection, route) => getData(selection, route).then(renderData);
+const getAndRenderData = (selection, route) => getOrDeleteData(`GET`, selection, route).then(renderData);
 
 const fetchData = (method, selection, userInput, id) => {
     fetch(`http://localhost:3001/api/${selection}/${id}`, {
@@ -205,7 +205,7 @@ const app = async () => {
         type: `list`,
         name: `choice`,
         message: `What would you like to do?`,
-        choices: [`View All Employees`, `Add Employee`, `Update Employee Role`, `Update Employee Manager`, `View All Roles`, `Add Role`, `View All Departments`, `Add Department`, `Quit`]
+        choices: [`View All Employees`, `Add Employee`, `Update Employee Role`, `Update Employee Manager`, `Delete Employee`, `View All Roles`, `Add Role`, `Delete Role`, `View All Departments`, `Add Department`, `Delete Department`, `Quit`]
     }).then((answer) => {
         switch (answer.choice) {
             case `View All Employees`:
@@ -220,17 +220,26 @@ const app = async () => {
             case `Update Employee Manager`:
                 updateData(`employee`).then(app);
                 break;
+            case `Delete Employee`:
+                getId(`employee`).then((id) => getOrDeleteData(`DELETE`, `employee`, id)).then(app);
+                break;
             case `View All Roles`:
                 getAndRenderData(`role`, `table`).then(app);
                 break;
             case `Add Role`:
                 postRoleBody().then((body) => fetchData(`POST`, `role`, body, ``)).then(app)
                 break;
+            case `Delete Role`:
+                getId(`role`).then((id) => getOrDeleteData(`DELETE`, `role`, id)).then(app);
+                break;
             case `View All Departments`:
                 getAndRenderData(`department`, `table`).then(app);
                 break;
             case `Add Department`:
                 inquirer.prompt(addDepartmentQuestion).then((body) => fetchData(`POST`, `department`, body, ``)).then(app);
+                break;
+            case `Delete Department`:
+                getId(`department`).then((id) => getOrDeleteData(`DELETE`, `department`, id)).then(app);
                 break;
             default:
         }
