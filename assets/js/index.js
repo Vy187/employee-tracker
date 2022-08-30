@@ -61,7 +61,7 @@ const postRoleBody = async () => {
         {
             type: `input`,
             name: `title`,
-            message: `What is the name of this new role`,
+            message: `What is the name of this new role?`,
             validate(answer) { return ((!/^[a-zA-Z\s]+$/.test(answer) || answer.trim().length < 3) ? `Role names contain letters or longer than 2 letters` : true) }
         },
         {
@@ -94,13 +94,13 @@ const postEmployeeBody = async () => {
         {
             type: `input`,
             name: `first_name`,
-            message: `What is the first name of this new employee`,
+            message: `What is the first name of this new employee?`,
             validate(answer) { return ((!/^[a-zA-Z]+$/.test(answer) || answer.trim().length < 3) ? `Names contain letters or longer than 2 letters` : true) }
         },
         {
             type: `input`,
             name: `last_name`,
-            message: `What is the last name of this new employee`,
+            message: `What is the last name of this new employee?`,
             validate(answer) { return ((!/^[a-zA-Z]+$/.test(answer) || answer.trim().length < 3) ? `Names contain letters or longer than 2 letters` : true) }
         },
         {
