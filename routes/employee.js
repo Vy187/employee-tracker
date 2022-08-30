@@ -21,13 +21,13 @@ employee.get(`/table`, (req, res) => {
 
 employee.post(`/`, ( { body }, res) => {
     console.log(body.first_name)
-    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [body.first_name, body.last_name, body.role_id, body.manager_id], (err, result) => {
+    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`, [body.first_name, body.last_name, body.role_id, body.manager_id], (err, result) => {
         (err) ? res.status(400).json({ error: err.message}) : res.json({ message: `success`, data: body});
     })
 })
 
 employee.put(`/role:id`, (req, res) => {
-    db.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [req.body.role_id, req.params.id], (err, result) => {
+    db.query(`UPDATE employees SET role_id = ? WHERE id = ?;`, [req.body.role_id, req.params.id], (err, result) => {
         if (err) {
             res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {
@@ -39,7 +39,7 @@ employee.put(`/role:id`, (req, res) => {
 })
 
 employee.put(`/manager:id`, (req, res) => {
-    db.query(`UPDATE employees SET manager_id = ? WHERE id = ?`, [req.body.manager_id, req.params.id], (err, result) => {
+    db.query(`UPDATE employees SET manager_id = ? WHERE id = ?;`, [req.body.manager_id, req.params.id], (err, result) => {
         if (err) {
             res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {
@@ -51,7 +51,7 @@ employee.put(`/manager:id`, (req, res) => {
 })
 
 employee.delete(`/:id`, (req, res) => {
-    db.query(`DELETE FROM employees WHERE id = ?`, [req.params.id], (err, result) => {
+    db.query(`DELETE FROM employees WHERE id = ?;`, [req.params.id], (err, result) => {
         if (err) {
             res.status(400).json({ error: res.message });
         } else if (!result.affectedRows) {

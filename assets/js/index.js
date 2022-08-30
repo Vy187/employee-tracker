@@ -1,4 +1,4 @@
-const fetch = require(`node-fetch`)
+const fetch = require(`node-fetch`);
 const cTable = require(`console.table`);
 const inquirer = require("inquirer");
 const addDepartmentQuestion = {
@@ -212,7 +212,7 @@ const app = async () => {
                 getAndRenderData(`employee`, `table`).then(app);
                 break;
             case `Add Employee`:
-                postEmployeeBody().then((body) => fetchData(`POST`, `employee`, body, ``)).then(app)
+                postEmployeeBody().then((body) => fetchData(`POST`, `employee`, body, ``)).then(app);
                 break;
             case `Update Employee Role`:
                 updateData(`role`).then(app);
@@ -227,7 +227,7 @@ const app = async () => {
                 getAndRenderData(`role`, `table`).then(app);
                 break;
             case `Add Role`:
-                postRoleBody().then((body) => fetchData(`POST`, `role`, body, ``)).then(app)
+                postRoleBody().then((body) => fetchData(`POST`, `role`, body, ``)).then(app);
                 break;
             case `Delete Role`:
                 getId(`role`).then((id) => getOrDeleteData(`DELETE`, `role`, id)).then(app);
